@@ -1,0 +1,16 @@
+{
+    "name": "jimbojsb/bmwcca-client",
+    "description": "SOAP wrapper for BMW CCA membership verification",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Josh Butts",
+            "email": "josh@joshbutts.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "BMWCCA": "src/"
+        }
+    }
+}
