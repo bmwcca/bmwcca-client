@@ -107,6 +107,10 @@ class Client
         $constituentMembershipSearch = json_decode(json_encode(simplexml_load_string($constituentMembershipSearch->SearchObjectResult->any)), true);
         if ($constituentMembershipSearch) {
             $actualData = $constituentMembershipSearch["Qdst"]["ConstituentMembership"];
+            if (isset($actualData["MemberUID"])) {
+                // only has one membership item
+                $actualData = [$actualData];
+            }
             foreach ($actualData as $membershipItem) {
                 // save some of this data
                 $memberData["join_date"] = $membershipItem["JoinDate"];
