@@ -16,6 +16,8 @@ class Client
 
     public function getMembershipInfo($memberNumber)
     {
+        $memberNumber = str_pad("$memberNumber", 6, "0", STR_PAD_LEFT);
+
         $username = $this->username;
         $password = $this->password;
         $soapClient = $this->soapClient;
@@ -44,26 +46,43 @@ class Client
             $memberData["join_date"] = $details["join_date"];
             $memberData["memberships"] = $details["memberships"];
 
-            // search for associates
-            $associateSearch = $soapClient->SearchObject([
-                "BusinessObject" => "Person",
-                "Criteria"       => "ConstituentID=ne,a;ParentID=eq,$memberNumber",
-                "Credentials"    => "$username;$password",
-                "Delimiter"      => ";",
-                "Fields"         => "",
-                "DedupeField"    => "",
-                "SortFields"     => "",
-                "MaxResults"     => ""
-            ]);
-            $associateSearch = json_decode(json_encode(simplexml_load_string($associateSearch->SearchObjectResult->any)), true);
-            $associateData = $associateSearch["Qdst"]["Person"];
-            if ($associateSearch) {
-                $memberData["associates"] = $this->getMembershipInfo($associateData["ConstituentID"]);
-            }
         } else {
             return []; // nothing at all found for that member id
         }
         return $memberData;
+    }
+
+    public function getAssociates($memberNumber)
+    {
+        $memberNumber = str_pad("$memberNumber", 6, "0", STR_PAD_LEFT);
+
+        $username = $this->username;
+        $password = $this->password;
+        $soapClient = $this->soapClient;
+
+        $memberData = [];
+
+        // search for associates
+        $associateSearch = $soapClient->SearchObject([
+            "BusinessObject" => "Person",
+            "Criteria"       => "ConstituentID=ne,a;ParentID=eq,$memberNumber",
+            "Credentials"    => "$username;$password",
+            "Delimiter"      => ";",
+            "Fields"         => "",
+            "DedupeField"    => "",
+            "SortFields"     => "",
+            "MaxResults"     => ""
+        ]);
+        $associateSearch = json_decode(json_encode(simplexml_load_string($associateSearch->SearchObjectResult->any)), true);
+        //@TODO fix this
+//        $associateData = $associateSearch["Qdst"]["Person"];
+//        if ($associateSearch) {
+//            return = $this->getMembershipInfo($associateData["ConstituentID"]);
+//        }
+//        } else {
+//            return []; // nothing at all found for that member id
+//        }
+//        return $memberData;
     }
 
     private function getDetailsForConstituent($constituentId)
